@@ -16,31 +16,32 @@ public class Logger {
     private static String sTag = "futils";
     private static final int JSON_INDENT = 2;
     private static boolean sNeedHeader = true;
+    private static boolean sNeedClassName = true;
 
-
-    public static void init(boolean debug, String tag,boolean needHeader) {
+    public static void init(boolean debug, String tag,boolean needHeader,boolean needClassName) {
         Logger.sDebug = debug;
         Logger.sTag = tag;
         Logger.sNeedHeader = needHeader;
+        Logger.sNeedClassName = needClassName;
     }
 
-    public static void e(String msg, Object... params) {
-        e(null, msg, params);
+    public static void e(String msg) {
+        e(null, msg);
     }
 
-    public static void d(String msg, Object... params) {
-        d(null, msg, params);
+    public static void d(String msg) {
+        d(null, msg);
     }
 
 
-    public static void e(String tag, String msg, Object[] params) {
+    public static void e(String tag, String msg) {
         if (!sDebug) return;
-        LogText.e(getFinalTag(tag), String.format(msg, params));
+        LogText.e(getFinalTag(tag), msg);
     }
 
-    public static void d(String tag,String msg,Object[] params) {
+    public static void d(String tag,String msg) {
         if (!sDebug) return;
-        LogText.d(getFinalTag(tag), String.format(msg, params));
+        LogText.d(getFinalTag(tag), msg);
     }
 
     public static void json(String json) {
@@ -125,16 +126,20 @@ public class Logger {
         }
 
         public void setUpContentE(String content) {
-            StackTraceElement targetStackTraceElement = getTargetStackTraceElement();
-            Log.e(mTag, "(" + targetStackTraceElement.getFileName() + ":"
-                    + targetStackTraceElement.getLineNumber() + ")");
+            if(sNeedClassName) {
+                StackTraceElement targetStackTraceElement = getTargetStackTraceElement();
+                Log.e(mTag, "(" + targetStackTraceElement.getFileName() + ":"
+                        + targetStackTraceElement.getLineNumber() + ")");
+            }
             Log.e(mTag, content);
         }
 
         public void setUpContentD(String content) {
-            StackTraceElement targetStackTraceElement = getTargetStackTraceElement();
-            Log.d(mTag, "(" + targetStackTraceElement.getFileName() + ":"
-                    + targetStackTraceElement.getLineNumber() + ")");
+            if(sNeedClassName) {
+                StackTraceElement targetStackTraceElement = getTargetStackTraceElement();
+                Log.d(mTag, "(" + targetStackTraceElement.getFileName() + ":"
+                        + targetStackTraceElement.getLineNumber() + ")");
+            }
             Log.d(mTag, content);
         }
 
